@@ -5,6 +5,9 @@ let list = document.querySelector('#list');
 let select = document.getElementById('select-list');
 let name = document.getElementById('name');
 let price = document.getElementById('price');
+let adress = "https://jsonplaceholder.typicode.com/users";
+let request = new XMLHttpRequest();
+
 
 class pizza {
     constructor(name,callories,price,picture, ...composition){
@@ -167,61 +170,34 @@ function sortname (){
         return 0;
     })
 
-    let main = document.querySelector('main')
-    main.innerText = ""    
-
-    for(let i=0; i<pizzas.length;i++) {
-        let pizza = document.createElement('div')
-        pizza.className = "list_item"
-        
-        let picture = document.createElement('img')
-        picture.src = 'https://png.pngtree.com/png-vector/20190316/ourlarge/pngtree-pizza-icon-%7C-set-of-great-flat-icons-design-illustration-concept-png-image_854550.jpg';
-        picture.setAttribute("width","75px");
-        picture.setAttribute("height","75px");
-        pizza.appendChild(picture)
-
-        let name = document.createElement('span');
-        name.className = "span_list"
-        name.innerText = pizzas[i].name
-        pizza.appendChild(name)
-
-        let price = document.createElement('span');
-        price.className = "span_list"
-        price.innerText = pizzas[i].price
-        pizza.appendChild(price)
-
-        main.appendChild(pizza)
-    }
+   makeList()
 }
 
 function sortprice (){
     pizzas.sort((a,b) => parseInt(a.price)-parseInt(b.price) )
 
+    makeList()
+
     let main = document.querySelector('main')
-    main.innerText = ""    
+    let button = document.createElement('div');
+    button.innerText = "Загрузить ещё"
+    main.appendChild(button)
 
-    for(let i=0; i<pizzas.length;i++) {
-        let pizza = document.createElement('div')
-        pizza.className = "list_item"
-        
-        let picture = document.createElement('img')
-        picture.src = 'https://png.pngtree.com/png-vector/20190316/ourlarge/pngtree-pizza-icon-%7C-set-of-great-flat-icons-design-illustration-concept-png-image_854550.jpg';
-        picture.setAttribute("width","75px");
-        picture.setAttribute("height","75px");
-        pizza.appendChild(picture)
+    button.addEventListener('click', () => {
+        request.open("GET",adress)
 
-        let name = document.createElement('span');
-        name.className = "span_list"
-        name.innerText = pizzas[i].name
-        pizza.appendChild(name)
-
-        let price = document.createElement('span');
-        price.className = "span_list"
-        price.innerText = pizzas[i].price
-        pizza.appendChild(price)
-
-        main.appendChild(pizza)
-    }
+        request.onload = () => {
+            let users = JSON.parse(request.response)
+            
+            for(let i =0;i<users.length;i++){
+                let block = document.createElement('span')
+                block.innerText = users[i].name
+                main.appendChild(block)
+                //console.log(block)
+            }
+        }
+        request.send()
+    })
 }
 
 
@@ -230,3 +206,17 @@ list.addEventListener('click',makeList);
 select.addEventListener('change',sortcomponent);
 name.addEventListener('click',sortname);
 price.addEventListener('click',sortprice);
+
+
+// request.open("GET",adress)
+
+// request.onload = () => {
+//     if(request.status >= 400){
+//         console.error(request.response)
+//     }
+//     console.log(request.response)
+// }
+// request.onerror =() =>{
+//     console.log(request.response)
+// }
+// request.send()
