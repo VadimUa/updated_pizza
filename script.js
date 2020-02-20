@@ -6,6 +6,8 @@ let select = document.getElementById('select-list');
 let name = document.getElementById('name');
 let price = document.getElementById('price');
 let main = document.querySelector('main');
+let my_pizza = document.querySelector("#my_pizza")
+let pizza_constructor = document.createElement("div");
 
 
 class pizza {
@@ -114,6 +116,154 @@ function makeGrid(){
 
     main.innerText = ""
     main.classList.remove('listes');
+    my_pizza.classList.remove("hiden")
+    my_pizza.addEventListener("click", () => {
+        
+        pizza_constructor.className = "constructor"
+        main.insertAdjacentElement("afterbegin",pizza_constructor)
+        let cust_name = document.createElement("input")
+        cust_name.setAttribute("placeholder","name")
+        let cust_recipe = document.createElement("input")
+        cust_recipe.setAttribute("placeholder","recipe")
+       pizza_constructor.appendChild(cust_name)
+       pizza_constructor.appendChild(cust_recipe)
+       let create = document.createElement("span")
+       create.innerText = "создать"
+       pizza_constructor.appendChild(create)
+       create.addEventListener("click", () => {
+           let custom_pizza = new pizza (cust_name.value,"ваш выбор","350гр","https://e1.edimdoma.ru/data/posts/0002/0797/20797-ed4_wide.jpg?1495010067",cust_recipe.value)
+           pizzas.unshift(custom_pizza)
+           main.innerText = ""
+           for(let i=0; i<pizzas.length;i++) {
+            let container = document.createElement("div")
+            container.className = "element"
+            let pizza = document.createElement('div')
+            pizza.className = "box"
+    
+            let wraper = document.createElement("div");
+            wraper.classList.add("side");
+            wraper.classList.add("back_side");
+            let picture = document.createElement('img');
+            picture.src = pizzas[i].picture;
+            picture.setAttribute("width","100%");
+            picture.setAttribute("height","100%");
+            wraper.appendChild(picture);
+            pizza.appendChild(wraper);
+    
+            let text_wrap = document.createElement('div');
+            text_wrap.classList.add("side");
+            text_wrap.classList.add("front_side")
+            let name = document.createElement('span');
+            name.innerText = pizzas[i].name
+            text_wrap.appendChild(name)
+    
+            let consistence = pizzas[i].composition[0].split(",");
+            let callories =  pizzas[i].callories
+            for(let  i =0; i<consistence.length;i++){
+                 callories = parseInt(callories) + parseInt(composites[consistence[i]]);
+            }
+            let container_callories = document.createElement('span');
+            container_callories.innerText = callories + "kkal"
+            text_wrap.appendChild(container_callories)
+    
+            let price = pizzas[i].price;
+            for(let i = 0;i<consistence.length;i++){
+                price = parseInt(price) + parseInt(prices[consistence[i]]);
+            }
+            let price_container = document.createElement('span');
+            price_container.innerText = price + "грн"
+            text_wrap.appendChild(price_container)
+    
+    
+            let recipe = document.createElement("div");
+            recipe.className = "recipe";
+            for(let i = 0;i<consistence.length;i++){
+                let composition = document.createElement('span');
+                composition.className = "inlined";
+                composition.innerText = consistence[i]
+                recipe.appendChild(composition);
+            }
+            let select = document.createElement("select")
+            let cheese = document.createElement("option")
+            let beef = document.createElement("option")
+            let pomodoro = document.createElement("option")
+            pomodoro.value = "Pomodoro"
+            cheese.value = "Моцарелла"
+            beef.value = "Ветчина"
+            pomodoro.innerText = "pomodoro"
+            cheese.innerText = "cheese"
+            beef.innerText = "beef"
+            select.appendChild(pomodoro)
+            select.appendChild(cheese)
+            select.appendChild(beef)
+            text_wrap.appendChild(recipe)
+            text_wrap.appendChild(select)
+            pizza.appendChild(text_wrap)
+    
+            select.addEventListener("click",(event) =>{
+                event.stopPropagation()
+            })
+    
+            select.addEventListener("change", (event) => {
+                event.stopPropagation();
+                let target = select.value;
+                consistence.push(target)
+                let composition = document.createElement('span');
+                composition.className = "inlined"
+                composition.innerText = target
+                recipe.appendChild(composition);
+                
+                let callories =  pizzas[i].callories;
+                let price =  pizzas[i].price;
+                for(let  i =0; i<consistence.length;i++){
+                    callories = parseInt(callories) + parseInt(composites[consistence[i]]);
+                    price = parseInt(price) + parseInt(prices[consistence[i]]);
+                 }
+                container_callories.innerText = callories + "kkal"
+                price_container.innerText = price + "грн"
+            })
+          
+    
+    
+    
+            container.appendChild(pizza)
+    
+            recipe.addEventListener("click", (event) => {
+    
+                let target = event.target;
+                target.classList.toggle("deleted");
+                event.stopPropagation()
+    
+                let callories =  pizzas[i].callories;
+                let price =  pizzas[i].price;
+                if(target.classList.contains("deleted")){
+                    consistence.splice(consistence.indexOf(target.innerText),1)
+                    callories =  pizzas[i].callories
+                    for(let  i =0; i<consistence.length;i++){
+                        callories = parseInt(callories) + parseInt(composites[consistence[i]]);
+                        price = parseInt(price) + parseInt(prices[consistence[i]]);
+                     }
+                    container_callories.innerText = callories + "kkal"
+                    price_container.innerText = price + "грн"
+                }
+                if(!target.classList.contains("deleted")){
+                    let deleted = target.innerText;
+                    consistence.push(deleted)
+                    callories =  pizzas[i].callories
+                    for(let  i =0; i<consistence.length;i++){
+                        callories = parseInt(callories) + parseInt(composites[consistence[i]]);
+                        price = parseInt(price) + parseInt(prices[consistence[i]]);
+                }
+                    container_callories.innerText = callories + "kkal"
+                    price_container.innerText = price + "грн"
+                }
+            })
+    
+            main.appendChild(container)
+    
+        }   
+       })
+    })
 
     for(let i=0; i<pizzas.length;i++) {
         let container = document.createElement("div")
@@ -155,6 +305,7 @@ function makeGrid(){
         price_container.innerText = price + "грн"
         text_wrap.appendChild(price_container)
 
+
         let recipe = document.createElement("div");
         recipe.className = "recipe";
         for(let i = 0;i<consistence.length;i++){
@@ -163,8 +314,55 @@ function makeGrid(){
             composition.innerText = consistence[i]
             recipe.appendChild(composition);
         }
+        let select = document.createElement("select")
+        let cheese = document.createElement("option")
+        let beef = document.createElement("option")
+        let pomodoro = document.createElement("option")
+        pomodoro.value = "Pomodoro"
+        cheese.value = "Моцарелла"
+        beef.value = "Ветчина"
+        pomodoro.innerText = "pomodoro"
+        cheese.innerText = "cheese"
+        beef.innerText = "beef"
+        select.appendChild(pomodoro)
+        select.appendChild(cheese)
+        select.appendChild(beef)
         text_wrap.appendChild(recipe)
+        text_wrap.appendChild(select)
+        let create = document.createElement("span")
+       create.innerText = "Купить"
+       create.onclick = (event) => {
+        event.stopPropagation();
+        let count = document.querySelector(".count");
+        count.innerText = parseInt(count.innerText) +1
+        localStorage.setItem(name, JSON.stringify(pizzas[i]))
+       }
+       text_wrap.appendChild(create)
         pizza.appendChild(text_wrap)
+
+        select.addEventListener("click",(event) =>{
+            event.stopPropagation()
+        })
+
+        select.addEventListener("change", (event) => {
+            event.stopPropagation();
+            let target = select.value;
+            consistence.push(target)
+            let composition = document.createElement('span');
+            composition.className = "inlined"
+            composition.innerText = target
+            recipe.appendChild(composition);
+            
+            let callories =  pizzas[i].callories;
+            let price =  pizzas[i].price;
+            for(let  i =0; i<consistence.length;i++){
+                callories = parseInt(callories) + parseInt(composites[consistence[i]]);
+                price = parseInt(price) + parseInt(prices[consistence[i]]);
+             }
+            container_callories.innerText = callories + "kkal"
+            price_container.innerText = price + "грн"
+        })
+      
 
 
 
@@ -295,6 +493,46 @@ function sortcomponent(){
         text_wrap.appendChild(recipe)
         pizza.appendChild(text_wrap)
         container.appendChild(pizza)
+        let select = document.createElement("select")
+        let cheese = document.createElement("option")
+        let beef = document.createElement("option")
+        let pomodoro = document.createElement("option")
+        pomodoro.value = "Pomodoro"
+        cheese.value = "Моцарелла"
+        beef.value = "Ветчина"
+        pomodoro.innerText = "pomodoro"
+        cheese.innerText = "cheese"
+        beef.innerText = "beef"
+        select.appendChild(pomodoro)
+        select.appendChild(cheese)
+        select.appendChild(beef)
+        text_wrap.appendChild(recipe)
+        text_wrap.appendChild(select)
+        pizza.appendChild(text_wrap)
+
+        select.addEventListener("click",(event) =>{
+            event.stopPropagation()
+        })
+
+        select.addEventListener("change", (event) => {
+            event.stopPropagation();
+            let target = select.value;
+            consistence.push(target)
+            let composition = document.createElement('span');
+            composition.className = "inlined"
+            composition.innerText = target
+            recipe.appendChild(composition);
+            
+            let callories =  pizzas[i].callories;
+            let price =  pizzas[i].price;
+            for(let  i =0; i<consistence.length;i++){
+                callories = parseInt(callories) + parseInt(composites[consistence[i]]);
+                price = parseInt(price) + parseInt(prices[consistence[i]]);
+             }
+            container_callories.innerText = callories + "kkal"
+            price_container.innerText = price + "грн"
+        })
+      
         recipe.addEventListener("click", (event) => {
 
             let target = event.target;
